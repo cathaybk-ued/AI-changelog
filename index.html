@@ -1006,7 +1006,7 @@
   <header class="hero">
     <div class="refresh-badge">
       <span class="pulse"></span>
-      <span>最後更新 <b id="lastRefreshed">2026-06-16 09:10 (Taipei)</b></span>
+      <span>最後更新 <b id="lastRefreshed">2026-06-22 10:16 (Taipei)</b></span>
       <span class="method-tag" id="refreshMethod" title="此次更新由排程任務自動觸發">排程觸發</span>
       <span class="schedule">每週一自動更新</span>
       <button class="refresh-btn" id="manualRefreshBtn" type="button" title="立即觸發更新（背景執行）">
@@ -1490,6 +1490,11 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.185", date:"2026-06-20", cat:"UI/UX", body:"串流停滯提示文字調整：由「No response from API · Retrying in …」改為「Waiting for API response · will retry in …」，且觸發時機由靜默 10 秒延長為 20 秒。"},
+    {v:"2.1.183", date:"2026-06-19", cat:"Permissions/Security", body:"<b>強化 auto mode 安全性</b>：未經要求時封鎖破壞性 git 指令（<code>git reset --hard</code>、<code>git checkout -- .</code>、<code>git clean -fd</code>、<code>git stash drop</code>），未由本回合 agent 產生的 commit 阻擋 <code>git commit --amend</code>，未指定特定 stack 時阻擋 <code>terraform destroy</code>/<code>pulumi destroy</code>/<code>cdk destroy</code>；<b>新增 <code>attribution.sessionUrl</code> 設定</b>可在 web／Remote Control session 的 commit 與 PR 省略 session 連結；新增 <code>/config --help</code> 列出所有可用簡寫鍵；<code>/config</code> 切換行為改良（Enter 與 Space 都可變更、Esc 改為儲存並關閉）；移除 logo 下方的啟動「setup issues」列（改用 <code>/doctor</code> 檢視）；修復 subagent 生成與 session 標題產生時 <code>thinking.disabled.display</code> 400 錯誤、subagent 中 WebSearch 回空結果、Windows Terminal 重度巢狀 subagent 下全螢幕 TUI 畫面損毀、模型只回 thinking block 時回合無輸出（改為重新提示一次）等多項問題。"},
+    {v:"2.1.181", date:"2026-06-17", cat:"Settings/Config", body:"<b>新增 <code>/config key=value</code> 語法</b>可從提示框直接設定任一設定（如 <code>/config thinking=false</code>），互動式、<code>-p</code> 與 Remote Control 皆適用；新增 <code>sandbox.allowAppleEvents</code> opt-in 設定讓沙箱指令在 macOS 送 Apple Events；<b>新增 <code>CLAUDE_CLIENT_PRESENCE_FILE</code> 環境變數</b>，指向標記檔可在你人在電腦前時抑制行動推播；內建 Bun runtime 升級至 1.4；長段落串流改為逐行顯示；thinking 中途斷線改為自動重試。修復自訂 <code>ANTHROPIC_BASE_URL</code> 與 Foundry 上 prompt caching 未命中、Write／Edit 在網路磁碟與雲端同步資料夾產生 0 byte 或截斷檔案、前景 subagent 無上限巢狀生成（現比照 5 層深度限制）等多項問題。"},
+    {v:"2.1.179", date:"2026-06-16", cat:"Performance/Bug Fix", body:"修復串流中途斷線（部分回應改為保留而非顯示原始錯誤、spinner 不再卡在 running tool）、WSL2 於 Windows Terminal 與 VS Code 滑鼠滾輪捲動（2.1.172 迴歸）、Linux 上 sandbox <code>denyRead</code>/<code>allowRead</code> glob 比對大型目錄樹導致 Bash 工具描述爆量使 session 無法使用、歡迎畫面同時堆疊多張宣傳橫幅等問題；遠端 session 的 plugin 載入效能改善。"},
+    {v:"2.1.178", date:"2026-06-15", cat:"Subagents/Skills", body:"<b>Agent teams：移除 <code>TeamCreate</code> 與 <code>TeamDelete</code> 工具</b>，設 <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code> 後每個 session 即有一個隱式 team，直接用 Agent 工具的 <code>name</code> 參數生成 teammate，免設定步驟；<b>新增 <code>Tool(param:value)</code> 權限規則語法</b>比對工具輸入參數（支援 <code>*</code> 萬用字元），如 <code>Agent(model:opus)</code> 可封鎖 Opus subagent；巢狀 <code>.claude/skills</code> 目錄下的 skills 在該處工作時自動載入，名稱衝突時以 <code>&lt;dir&gt;:&lt;name&gt;</code> 並存；<b>改良 auto mode</b>：subagent 生成前先經分類器評估，補上 subagent 可繞過審查請求被封鎖動作的漏洞；<code>/doctor</code> 版面與狀態圖示改良；<code>/bug</code> 送出前要求填寫描述。"},
     {v:"2.1.176", date:"2026-06-12", cat:"Settings/Config", body:"<b>Session 標題改用對話語言生成</b>（可設 <code>language</code> 設定釘選特定語言）；<b>新增 <code>footerLinksRegexes</code> 設定</b>，用正規表示式比對在頁尾列顯示連結徽章（user／managed 設定皆可）；Bedrock 憑證快取改良：<code>awsCredentialExport</code> 取得的憑證快取到其 <code>Expiration</code> 而非固定 1 小時；強化 <code>availableModels</code> 限制：alias 模型選擇不再能透過 <code>ANTHROPIC_DEFAULT_*_MODEL</code> 環境變數被導向被封鎖模型，<code>/fast</code> 在切換對象落在允許清單外時拒絕切換；修復未啟用 Opus 4.8 的組織在 Fable 5 上 auto mode 失敗（改 fallback 到最佳可用 Opus）、hook <code>if</code> 對 Read／Edit／Write 路徑的條件比對、Linux sandbox 在 <code>settings.json</code> 為絕對路徑 symlink 時無法啟動、tmux over SSH 下 <code>/copy</code> 與滑鼠選取未進系統剪貼簿、Remote Control 從 web／mobile 連線靜默切換 session 模型等多項問題。"},
     {v:"2.1.175", date:"2026-06-12", cat:"Settings/Config", body:"<b>新增 <code>enforceAvailableModels</code> managed 設定</b>：啟用後 <code>availableModels</code> 允許清單同時約束 Default 模型（會落在被禁模型的 Default 改 fallback 到第一個允許模型），且 user／project 設定不能擴張 managed 的 <code>availableModels</code> 清單。"},
     {v:"2.1.174", date:"2026-06-12", cat:"UI/UX", body:"新增 <code>wheelScrollAccelerationEnabled</code> 設定，可在全螢幕模式關閉滑鼠滾輪加速；修復 <code>/model</code> picker 隱藏 Default 對應模型家族（Opus 於 Max／Team Premium／Enterprise、Sonnet 於 Pro／Team、Opus 於 pay-as-you-go API 各自顯示為獨立列）、<code>ANTHROPIC_DEFAULT_SONNET_MODEL</code> 指定不同 Sonnet 時顯示寫死版本標籤、企業用量計費帳戶誤顯示「Fable 5 開始消耗額度」橫幅、Bedrock GovCloud（<code>us-gov-*</code>）區域推導錯誤 inference profile 前綴等問題；<b>[VSCode] <code>/usage</code> 帳戶與用量對話框新增用量歸屬</b>（cache miss、長 context、subagents、各 skill／agent／plugin／MCP 24h 或 7d 拆解）。"},
@@ -1561,6 +1566,8 @@
   ];
 
   const DATA_CA = [
+    {v:"2026-06-18", date:"2026-06-18", cat:"UI/UX", title:"Record & Replay + 本地↔遠端 thread 交棒 + 自動化批次操作", body:"新增 <b>Record &amp; Replay</b>（macOS）：把你示範過一次的工作流錄製成可重用的 skill（初期不含 EEA／英國／瑞士，且需啟用 Computer Use）；<b>thread 可在本地與遠端主機間交棒</b>，移到已連線主機上對應的專案繼續執行，Codex 也能代為協調交棒；自動化（automation）執行紀錄新增<b>批次操作</b>，可一次將所有 run 標為已讀或封存符合條件者；新增管理 SSH 連線的 deep links；Browser Use 改良：草稿瀏覽 session 移到伺服器後，可見分頁路由與註解仍會保留。"},
+    {v:"2026-06-16", date:"2026-06-16", cat:"UI/UX", title:"更多 Codex App 功能擴展到 EEA／英國／瑞士", body:"更多 Codex App 能力推向歐洲經濟區、英國與瑞士：<b>Computer Use</b> 在這些地區的 macOS 與 Windows 可用，Codex 能以看、點、打字操作桌面 App；<b>Codex Chrome 擴充</b>可用於需登入 Chrome context 的瀏覽器任務，跨分頁於背景執行而不接管瀏覽器；<b>Memories</b> 可記住偏好、重複工作流、技術棧與 repo 慣例（這些地區預設關閉）；<b>Chronicle</b> 以 opt-in 研究預覽形式開放給 ChatGPT Pro（macOS），協助 Codex 從近期螢幕 context 建立記憶。"},
     {v:"2026-06-11", date:"2026-06-11", cat:"UI/UX", title:"Browser Developer mode + /init 指令 + 額度重置 banking", body:"新增 <b>Browser use 的 Developer mode</b>（Chrome 與 Codex 內建瀏覽器）：給 Codex 受控的 Chrome DevTools Protocol（CDP）存取，可做效能分析並深入除錯網路流量、console 輸出、runtime 錯誤與頁面狀態；composer 新增 <code>/init</code> 指令（與 Codex CLI 相同的專案指令初始化流程）；新增可自訂的 macOS Dock 圖示（淺／深色變體）；<b>Computer Use 開放給 EEA／英國／瑞士以外的企業用戶</b>，並支援在 Windows 設定每個 App 的 Computer Use 存取控制；指令選單新增「未讀對話」區；Plus／Pro 用戶新增額度重置 banking 與推薦邀請。Browser use 透過 CDP 與 DOM snapshot 最佳化加速最高 2 倍。"},
     {v:"2026-06-09", date:"2026-06-09", cat:"UI/UX", title:"從 Claude Code／Cowork 遷移 + plugins 畫面改版", body:"新增 <b>Migrate to Codex 流程</b>：可在 onboarding 期間從 <b>Claude Code 與 Claude Cowork</b> 匯入支援的設定；<b>plugins 畫面改版</b>，分頁呈現、marketplace 與分類篩選、鍵盤導航、更清楚的安裝動作；設定搜尋擴充到更多面板（含 Git 與 pets）。另修復窄版面 goal timer 重疊、review diff 排序與檔案樹一致、不支援半透明背景系統（含 Windows 10）的視窗渲染等問題。"},
     {v:"2026-06-04", date:"2026-06-04", cat:"UI/UX", title:"Profile 活動洞察與分享卡片", body:"Profile 區新增 <b>活動洞察（activity insights）與分享卡片</b>：可檢視 Codex 使用亮點、儲存個人 profile 卡片，consumer ChatGPT 方案可分享。另改善 Computer Use 啟動就緒與 appshot 錯誤回報；修復全螢幕瀏覽器 composer 控制、hex 色票、終端機捲軸與動畫 diff 統計對齊；<b>onboarding 擴充更多角色選項</b>讓首次使用建議更精準。"},
@@ -1595,6 +1602,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.141.0", date:"2026-06-18", cat:"MCP/Tools", title:"CLI 0.141.0：加密 remote executor + executor plugin 每 thread MCP", body:"<b>Remote executor 改用經認證、端對端加密的 Noise relay 通道</b>；跨平台遠端執行會保留 executor 原生的工作目錄與 shell（含跨 app-server／exec-server 邊界的檔案系統權限路徑）；<b>選定的 executor plugin 可在各 thread 啟用其 stdio MCP 伺服器</b>，plugin 探索新增「由我建立」marketplace 與依認證方式分類的精選 catalog；app-server client 可列出直屬子 thread、關聯外部 agent 匯入結果、讀取或兌換 rate-limit 重置額度；Realtime client 可顯式追加語音、控制 Codex 回應如何進入對話、略過啟動 context；<b>TUI 輸入提示可在閒置後自動解析</b>，附互動時暫停的倒數。修復 hook trust 略過於 <code>codex exec</code> thread 啟動與 resume 時持續、Windows sandbox 自動修復過期憑證、閒置 exec-server relay 保持連線、bundled SQLite 釘選含 WAL-reset 損毀修復的版本、TLS 支援企業 proxy 常用的 P-521 憑證簽章等問題；大型工具密集 session 的延遲與記憶體用量改善。"},
     {v:"0.140.0", date:"2026-06-15", cat:"Slash Commands", title:"CLI 0.140.0：/import 從 Claude Code 匯入 + 帳戶 token 用量檢視", body:"<b>新增 <code>/import</code></b>：可從 <b>Claude Code</b> 選擇性匯入 setup、專案設定與近期對話，降低跨工具搬遷成本；<b>新增 <code>/usage</code> 檢視</b>，呈現帳戶 token 活動的每日／每週／累計用量；<b>新增永久刪除 session</b>（<code>codex delete</code>、<code>/delete</code> 與 app-server <code>thread/delete</code>，含確認保護與 subagent 清理）；<code>/goal</code> 現在會保留超長文字、大段貼上內容與圖片附件（含遠端 app-server session）；<b>輸入 <code>@</code> 預設開啟整合 mentions 選單</b>（檔案、plugins、skills）；<b>新增 managed Amazon Bedrock API key 認證</b>，並為 CLI 與 MCP OAuth 憑證提供加密本機儲存。修復毀損 SQLite 狀態資料庫自動備份重建、<code>/review</code> 於排隊指示時按 Esc 崩潰、MCP 啟動失敗重試與保留已停用伺服器、遠端 plugin 解除安裝等多項問題；<b>移除 TUI 實驗性 <code>/realtime</code> 語音控制</b>與相關音訊相依；大型 repo／長 session 反應速度改善。"},
     {v:"0.139.0", date:"2026-06-09", cat:"MCP/Tools", title:"CLI 0.139.0：Code mode 直連 web 搜尋 + schema 保留", body:"<b>Code mode 現在可直接呼叫 standalone web 搜尋</b>（含巢狀 JavaScript tool 呼叫）並取得純文字結果；tool／connector 輸入 schema 保留 <code>oneOf</code>/<code>allOf</code>、大型 schema 壓縮時保留更多淺層結構，相容更豐富的 MCP 工具；<code>codex doctor</code> 本機報告新增編輯器／pager 環境細節（JSON 輸出遮蔽原值）；<code>codex plugin marketplace list --json</code> 含各 marketplace 來源、plugin 列表可先回快取的遠端 catalog 再於背景刷新。修復 <code>codex resume --last</code>/<code>fork --last</code> 把尾端參數誤判為 session ID、subagent 的 MCP 啟動警告外溢到父 thread、影像編輯誤用對話歷史推測路徑、<code>/new</code>/<code>/clear</code>/<code>/fork</code> 重置時掉 cloud-managed requirements/feature flag 等問題。"},
     {v:"0.138.0", date:"2026-06-08", cat:"Slash Commands", title:"CLI 0.138.0：/app 交棒 Codex Desktop + v2 存取權杖", body:"<b><code>/app</code> 指令可把目前 CLI thread 交棒到 macOS 或原生 Windows 的 Codex Desktop</b>，Windows workspace 啟動也能直接開進 Desktop 而非停在手動提示；本機影像附件與獨立圖片生成會把存檔路徑提供給模型，後續編輯與檔案引用更可靠；reasoning effort 選擇更彈性（TUI 為缺 <code>Alt</code> 綁定的終端加 fallback 快捷鍵、依模型宣告順序呈現各等級）；<b>app-server 可讀帳戶 token 用量、Codex auth 在 CLI 與 app-server 流程支援 v2 個人存取權杖</b>；plugin 自動化輸出更豐富（add/remove 與 marketplace 指令支援 <code>--json</code>、plugin 詳情含預設 prompt、遠端 MCP 伺服器與無法使用的 app 範本）。修復 forked thread 標題繼承、TUI 串流多餘空白與取消 prompt 後游標位置、config 寫入失敗錯誤訊息等問題。"},
@@ -1624,6 +1632,8 @@
   ];
 
   const DATA_FG = [
+    {v:"2026-06-18", date:"2026-06-18", cat:"Design", title:"Figma 設計 agent 內建 Web 搜尋", body:"Figma <b>設計 agent 現可搜尋網路</b>：在檔案內即可拉進即時網路 context、查找最佳實務、用真實內容（而非 placeholder）填充設計，無須離開檔案。在 chat 輸入「search the web」或於 plus 選單開啟即可。管理員（Organization／Enterprise）可在設定管控存取，組織內預設開啟但個別使用者需自行於 chat 切換。Beta。"},
+    {v:"2026-06-16", date:"2026-06-16", cat:"Design systems", title:"Figma MCP 伺服器：Slides、上傳字型、資產匯出與 Xcode", body:"Figma MCP 伺服器四項更新：<b><code>use_figma</code> 支援 Figma Slides</b>，外部 agent 可用你的範本建立與更新簡報；<b>支援上傳的本地字型</b>，伺服器以實際字型渲染文字而非 web-safe 近似；<b>新 <code>download_assets</code> 工具</b>可從 Figma 檔案匯出 JPG／SVG／PDF 資產；<b>相容 Xcode</b>，可把行動設計直接帶進 Xcode 建立流程與預覽畫面。"},
     {v:"2026-06-15", date:"2026-06-15", cat:"UI/UX", title:"Tab Groups：分組整理你的分頁", body:"桌面 App 可將分頁<b>分組、上色、展開／收合</b>：依專案／主題／工作流貼標籤、用顏色區分、收合保持專注。全使用者於桌面 App 可用。"},
     {v:"2026-06-12", date:"2026-06-12", cat:"Community", title:"Community 個人檔案改版", body:"Figma Community 個人檔案改版：可加上<b>角色、經歷、技術棧與自訂 FigPal</b>，釘選代表作品、加圖片與連結，串接社群帳號擴大追蹤。"},
     {v:"2026-06-11", date:"2026-06-11", cat:"Design", title:"Chrome 擴充：把網頁抓成可編輯圖層", body:"用 Figma <b>Chrome 擴充</b>把網站以結構化圖層帶進畫布：複製整頁或選取元素貼進 Figma 當參考與二創，無需編碼代理。以設計系統生成設計即將推出。Beta、限付費方案。"},
@@ -1744,6 +1754,16 @@
   ];
 
   const INSP_CA = [
+    {ico:"⏺", color:"gold", feat:"Record & Replay — 把重複流程錄成可重用 skill", ver:"2026-06-18 · Codex App", auto:true,
+     desc:"在 macOS 示範一次工作流，Codex 把它錄成可重用的 skill，日後一鍵重播。",
+     scen:"<b>應用場景：</b>把每次交付前的重複手動流程（例如多尺寸切圖匯出、依命名規則整理交付資料夾、產出標註版預覽）示範一次錄成 skill，之後一鍵重播，省去機械式手工步驟。",
+     roles:["designer"],
+     d:[
+       {h:"為什麼對設計師有用", p:"設計交付常卡在重複、機械式的後製步驟。Record &amp; Replay 把『做給它看一次』變成可重用流程，讓設計師把時間留給設計本身。"},
+       {h:"用法", l:["在 Codex App（macOS）啟用 Computer Use","實際示範一次完整流程","存成 skill，日後直接重播"]},
+       {h:"注意", p:"初期不含 EEA／英國／瑞士；需由你或管理員啟用 Computer Use。"}
+     ]
+    },
     {ico:"🌿", color:"teal", feat:"對話 Forking（分支）", ver:"v260212 · 2026-02-12",
      desc:"在同一個 thread 開分支試不同方向，不必重起一個 session。",
      scen:"<b>iOS UI 探索場景：</b>同一個 SwiftUI navigation 設計，先 fork 一支試 NavigationStack、另一支試 NavigationSplitView。比完再選，不會搞混上下文。",
@@ -2412,6 +2432,16 @@
   ];
 
   const INSP_FG = [
+    {ico:"🔎", color:"blue", feat:"設計 agent 內建 Web 搜尋", ver:"2026-06-18 · Figma", auto:true,
+     desc:"在檔案內讓設計 agent 搜尋網路，用真實內容（而非 placeholder）填充設計。",
+     scen:"<b>應用場景：</b>做行動銀行 App 的功能介紹頁時，直接在 Figma chat 請 agent 搜尋同類產品常見的資訊架構與真實文案、利率／匯率呈現格式，用真實內容取代 Lorem ipsum，讓利害關係人一眼看懂情境。",
+     roles:["designer"],
+     d:[
+       {h:"為什麼對設計師有用", p:"過去填 placeholder 常讓 review 失焦在『這是假資料嗎』。設計 agent 直接拉即時網路 context，用接近真實的內容呈現，讓設計決策與 review 更聚焦。"},
+       {h:"用法", l:["在 Figma Design 檔案的 chat 輸入「search the web」，或於 plus 選單開啟 web search","描述你要的內容（例如：常見的轉帳確認頁欄位、無障礙文案範例）","agent 拉回即時內容並填入設計"]},
+       {h:"注意", p:"目前為 Beta；Organization／Enterprise 由管理員在設定控管存取，組織預設開啟但個別使用者需自行於 chat 切換。"}
+     ]
+    },
     {ico:"✅", color:"teal", feat:"Check designs — handoff 前自動對齊設計系統", ver:"2026-06-04 · Figma",
      desc:"自動比對設計系統，標出寫死的值與對比違規並一鍵換成正確 token／合規色。",
      scen:"<b>Designer 場景：</b>交付前對整個 file 跑一次 Check designs，把寫死色彩換成 本行 token、修掉 WCAG 對比違規、抓出 detached component，確保交給 RD 的稿與設計系統一致，減少實作期的來回。",
