@@ -1006,7 +1006,7 @@
   <header class="hero">
     <div class="refresh-badge">
       <span class="pulse"></span>
-      <span>最後更新 <b id="lastRefreshed">2026-06-29 10:08 (Taipei)</b></span>
+      <span>最後更新 <b id="lastRefreshed">2026-07-06 10:09 (Taipei)</b></span>
       <span class="method-tag" id="refreshMethod" title="此次更新由排程任務自動觸發">排程觸發</span>
       <span class="schedule">每週一自動更新</span>
       <button class="refresh-btn" id="manualRefreshBtn" type="button" title="立即觸發更新（背景執行）">
@@ -1490,6 +1490,12 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.201", date:"2026-07-03", cat:"Models/Inference", body:"Claude Sonnet 5 session 不再使用對話中途的 system role 來傳遞 harness 提醒。"},
+    {v:"2.1.200", date:"2026-07-03", cat:"Settings/Config", body:"<b><code>AskUserQuestion</code> 對話框預設不再自動繼續</b>，可透過 <code>/config</code> 選擇加入閒置逾時；<b>「default」權限模式在 CLI、<code>--help</code>、VS Code 與 JetBrains 全面改稱「Manual」</b>（<code>--permission-mode manual</code> 與 <code>\"defaultMode\": \"manual\"</code> 與 <code>default</code> 皆接受）；修復 <code>.claude.json</code> 中 <code>disabledMcpServers</code>/<code>enabledMcpServers</code> 設為非陣列時啟動崩潰、背景 session 於睡眠／喚醒後靜默中止、背景 agent 因殘留 <code>daemon.lock</code>（PID 被 OS 重用）而再也無法啟動、subagent 於產出文字前被 rate limit 中斷回傳空結果等多項問題；<b>螢幕報讀改善</b>：裝飾字元隱藏、transcript 符號改讀短標籤、巢狀表格以「標題：值」逐行報讀。"},
+    {v:"2.1.199", date:"2026-07-02", cat:"Subagents/Skills", body:"<b>堆疊式 slash-skill 呼叫（如 <code>/skill-a /skill-b do XYZ</code>）現在會載入所有開頭的 skills（最多 5 個）</b>而非只有第一個；SSL 憑證錯誤（TLS 檢測 proxy、缺 <code>NODE_EXTRA_CA_CERTS</code>、憑證過期）改為立即失敗並附修正提示，不再空耗重試；串流回應在 API 於部分輸出後才回報 overloaded／server error 時改為保留 partial 並標記未完成；<b>subagent 被 rate limit 或 server error 中斷時改為將 partial 回傳給父 agent</b>，並會把「用量已達上限」等錯誤如實回報而非誤判為成功；修復 Linux 背景 agent daemon 在不乾淨關閉後每約 50 秒自殺並殺光執行中 agent；<code>CLAUDE_CODE_RETRY_WATCHDOG</code> 將非容量類暫時性錯誤的預設重試次數提高到 300，並解除 <code>CLAUDE_CODE_MAX_RETRIES</code> 上限 15。"},
+    {v:"2.1.198", date:"2026-07-01", cat:"Subagents/Skills", body:"<b>Subagent 預設改為背景執行</b>，Claude 在其執行時可繼續工作並於完成時收到通知；<b>Claude in Chrome 正式推出（GA）</b>；<code>claude agents</code> 新增背景 agent 通知（需輸入或完成時觸發 <code>Notification</code> hook：<code>agent_needs_input</code>／<code>agent_completed</code>）；<b>新增 <code>/dataviz</code> skill</b> 提供圖表與儀表板設計指引並附可執行的配色驗證器；從 <code>claude agents</code> 啟動的背景 agent 完成 worktree 內程式工作後會自動 commit、push 並開草稿 PR；內建 Explore agent 改為繼承主 session 模型（上限 opus）而非 haiku；subagent 與 context compaction 繼承 session 的 extended thinking 設定；升級至 highlight.js 11 改善語法高亮；移除 <code>/agents</code> 精靈（改由 Claude 建立管理或直接編輯 <code>.claude/agents/</code>）。"},
+    {v:"2.1.197", date:"2026-06-30", cat:"Models/Inference", body:"<b>推出 Claude Sonnet 5</b>：成為 Claude Code 的新預設模型，具原生 1M token context，並於 8/31 前提供每百萬 token $2／$10 的促銷定價；升級至 2.1.197 即可取得。"},
+    {v:"2.1.196", date:"2026-06-29", cat:"Settings/Config", body:"<b>新增組織預設模型支援</b>：管理員於組織主控台設定後，未自行選模型者的 <code>/model</code> 會顯示為「Org default」（或「Role default」）；session 啟動改用可讀的預設名稱以便識別與傳訊；<b>聊天中新增可點擊檔案附件</b>（Cmd/Ctrl 點擊可在 Finder／Explorer 顯示）；<b>安全性</b>：<code>claude mcp list</code>/<code>get</code> 不再啟動由 repo 自行核准（committed <code>.claude/settings.json</code>）的 <code>.mcp.json</code> 伺服器，未信任 workspace 顯示「⏸ Pending approval」；修復喚醒背景工作誤刪對話並重跑原 prompt（transcript 現改為保留而非刪除）、多項 <code>claude agents</code> 側欄狀態問題；<b><code>/code-review</code> 將五個清理 finder 合併為一，token 用量約降 25%</b>；串流閒置 watchdog 對所有供應商預設開啟（無事件 5 分鐘則中止並重試，<code>CLAUDE_ENABLE_STREAM_WATCHDOG=0</code> 可關閉）。"},
     {v:"2.1.195", date:"2026-06-26", cat:"UI/UX", body:"新增 <code>CLAUDE_CODE_DISABLE_MOUSE_CLICKS</code> 可停用全螢幕模式的滑鼠點擊／拖曳／hover（仍保留滾輪捲動）；修復 hook matcher 連字號識別碼（如 <code>code-reviewer</code>、<code>mcp__brave-search</code>）誤用子字串比對，改為精確比對；修復 macOS 長 session 語音聽寫在預設輸入裝置變更後錄到靜音、無空格語言（中／日／泰文）語音自動送出未觸發；修復僅由專案 <code>.claude/settings.json</code> 啟用的外部 plugin 未在每條載入路徑要求安裝同意、<code>plugin.json</code> name 與 marketplace 名稱不同時 <code>/plugin</code> 啟用／停用失效、背景工作從 <code>claude agents</code> 消失或掉資料、重開崩潰背景任務空白畫面達 5 秒等問題；Linux 語音改善區分「無麥克風」與「未裝 SoX」；Remote session 啟動加上佈建檢查清單。"},
     {v:"2.1.193", date:"2026-06-25", cat:"Settings/Config", body:"<b>新增 <code>autoMode.classifyAllShell</code> 設定</b>：把所有 Bash／PowerShell 指令送進 auto-mode 分類器，不再僅限任意程式碼執行樣式；auto-mode 拒絕原因會寫入 transcript、拒絕 toast 與 <code>/permissions</code> 最近拒絕清單；<b>新增 <code>claude_code.assistant_response</code> OTEL log 事件</b>（含模型回應文字，預設遮蔽，由 <code>OTEL_LOG_ASSISTANT_RESPONSES</code> 控制；未設時沿用 <code>OTEL_LOG_USER_PROMPTS</code>，升級後已記錄 prompt 內容者會開始收到回應內容）；bash 模式（<code>!</code>）新增即時檔案路徑自動完成；MCP 需認證時於啟動提示指向 <code>/mcp</code>；閒置背景 shell 指令自動記憶體回收。修復 <code>/login</code> 後 <code>/model</code> 顯示過時狀態、釘選背景 agent 每次自動更新後被重複詢問、MCP <code>headersHelper</code> 在 401／403 自動重連等問題。"},
     {v:"2.1.191", date:"2026-06-24", cat:"Slash Commands", body:"<b>新增 <code>/rewind</code> 可從 <code>/clear</code> 之前的點恢復對話</b>；修復串流時讀取早期輸出捲動跳到底部、背景 agent 停止後又復活（停止改為永久）、<code>/voice</code> 被組織政策停用改顯示限制原因、Windows Terminal 換行截斷 <code>/login</code> URL、逗號分隔 matcher（如 <code>\"Bash,PowerShell\"</code>）的 hook 從不觸發、<code>/permissions</code> 最近拒絕分頁核准未持久化等問題；sandbox 網路權限對話以「Yes」允許的主機整個 session 記住不再重問；MCP 能力探索（<code>tools/list</code> 等）與 OAuth 對暫時性網路錯誤重試；HTTP 404 錯誤顯示 URL 並指向 MCP 設定。"},
@@ -1608,6 +1614,9 @@
   ];
 
   const DATA_CI = [
+    {v:"0.142.5", date:"2026-07-01", cat:"Permissions/Security", title:"CLI 0.142.5：防止 WebSocket 請求內容寫入 trace log", body:"<b>安全修復</b>：不再將完整的 Responses WebSocket 請求酬載寫入 trace 記錄，避免敏感內容外流到追蹤日誌（回移至 0.142 發行分支）。"},
+    {v:"0.142.4", date:"2026-06-29", cat:"Performance/Bug Fix", title:"CLI 0.142.4：維護性更新", body:"維護性 patch 版本，無使用者面向的功能變更。"},
+    {v:"0.142.3", date:"2026-06-26", cat:"Performance/Bug Fix", title:"CLI 0.142.3：維護性更新", body:"自 0.142.2 起的維護性 patch 版本，無使用者面向的功能變更。"},
     {v:"0.142.2", date:"2026-06-25", cat:"MCP/Tools", title:"CLI 0.142.2：MCP 預設 tool search + 系統 proxy", body:"<b>MCP 工具在支援時預設改用 tool search</b>，改善工具探索並保留對舊模型／供應商相容；macOS 認證客戶端可在啟用 <code>respect_system_proxy</code> 時尊重系統 proxy、PAC、WPAD；plugin 可透過本地 manifest 與遠端 catalog 提供專屬<b>深色模式 logo</b>；App 可用伺服器提供的可見性與快速模型 metadata 顯示更豐富的安全緩衝 UI。修復遠端 plugin catalog 精選排名、過期 Amazon Bedrock 憑證改提供可行復原指引、遠端 stdio MCP 接受遠端平台路徑格式的絕對工作目錄、遠端 HTTP(S) 圖片輸入回傳清楚的模型可見驗證錯誤、PowerShell 中安全分類器無法檢查的可執行 AST 區段需核准等問題。"},
     {v:"0.142.1", date:"2026-06-25", cat:"Settings/Config", title:"CLI 0.142.1：Windows 系統 proxy 認證", body:"新增 opt-in 的 <b>Windows 系統 proxy 支援</b>用於認證，涵蓋 PAC、WPAD、靜態 proxy 與 bypass 規則。"},
     {v:"0.142.0", date:"2026-06-22", cat:"MCP/Tools", title:"CLI 0.142.0：用量重置額度 + indexed web-search + 多代理委派", body:"<b><code>/usage</code> 可顯示並兌換賺得的用量重置額度</b>（含確認、重試與刷新可用狀態）；<b><code>/plugins</code> 將遠端 plugin 分為 OpenAI Curated、Workspace、Shared with me</b>，合適回合可推薦並安裝相關 plugin；可設定的 <b>rollout token 預算</b>追蹤跨 agent thread 用量、提供剩餘提醒並在耗盡時中止回合；app-server client 可將多代理委派設為停用／僅明確要求／主動（thread 與 turn 層級）；<b>新增 indexed web-search 模式</b>（允許即時搜尋但僅能存取伺服器核可 URL）；Codex 可接收排程 UTC 時間提醒並直接查當前時間。修復 <code>Ctrl+Z</code> 暫停後 <code>fg</code> 恢復的 Linux TUI 渲染、exec-server 程序與 stdio MCP session 於暫時性中斷後存活等問題。"},
@@ -2390,6 +2399,18 @@
       {h:"為什麼對團隊有用", p:"過去 subagent 只有一層，遇到大型任務只能由單一 agent 串列處理。多層遞迴讓任務能以樹狀方式分而治之，平行度與結構性都更好。"},
       {h:"使用建議", l:["頂層 agent 只負責切分與彙整，不碰細節","每層明確定義產出格式，方便上層合併","控制深度（≤5 層）避免 context 與成本失控","葉節點 agent 給 read-only 權限降低風險"]},
       {h:"注意事項", p:"層數越深，token 成本與執行時間越高；建議先用 2–3 層驗證任務拆分是否合理，再視需要加深。"}
+    ],
+    auto:true
+  });
+  INSP_CC.push({
+    ico:"📊", color:"blue", feat:"/dataviz — 圖表與儀表板設計指引 skill", ver:"v2.1.198 · 2026-07-01",
+    desc:"新 <code>/dataviz</code> skill 提供圖表與儀表板的設計指引，並附可執行的配色驗證器。",
+    scen:"<b>應用場景：</b>設計師為行動銀行 App 的理財儀表板規劃圖表時，用 <code>/dataviz</code> 取得圖型選用與版面建議，並跑內建配色驗證器檢查色盤對比是否符合無障礙標準，再把規格交給 RD。",
+    roles:["designer","pm","ios","android"],
+    d:[
+      {h:"為什麼對設計師有用", p:"圖表設計常卡在「該用哪種圖」「配色對比夠不夠」。<code>/dataviz</code> 把設計指引與配色驗證收進同一個 skill，讓資料視覺化的決策有依據、可驗證。"},
+      {h:"基本用法", c:"bash", b:"# 啟動後呼叫 skill\n> /dataviz\n# 描述資料與目的，取得圖型與版面建議\n# 再對草擬的色盤跑配色驗證器"},
+      {h:"建議做法", l:["先確認資料型別（比較／趨勢／占比）再選圖型","用配色驗證器確保對比符合 WCAG AA","把產出的配色與規格沉澱成團隊設計 Token"]}
     ],
     auto:true
   });
