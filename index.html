@@ -1006,7 +1006,7 @@
   <header class="hero">
     <div class="refresh-badge">
       <span class="pulse"></span>
-      <span>最後更新 <b id="lastRefreshed">2026-07-06 10:09 (Taipei)</b></span>
+      <span>最後更新 <b id="lastRefreshed">2026-07-20 10:16 (Taipei)</b></span>
       <span class="method-tag" id="refreshMethod" title="此次更新由排程任務自動觸發">排程觸發</span>
       <span class="schedule">每週一自動更新</span>
       <button class="refresh-btn" id="manualRefreshBtn" type="button" title="立即觸發更新（背景執行）">
@@ -1490,6 +1490,19 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.215", date:"2026-07-19", cat:"Subagents/Skills", body:"Claude 不再自行執行 <code>/verify</code> 與 <code>/code-review</code> skills；需要時請自行以 <code>/verify</code> 或 <code>/code-review</code> 呼叫。"},
+    {v:"2.1.214", date:"2026-07-18", cat:"Permissions/Security", body:"<b>新增 <code>EndConversation</code> 工具</b>：面對高度濫用或越獄嘗試的使用者，Claude 可主動結束 session（比照 claude.ai 自 2025 年起的做法）；<b>多項 Bash 權限檢查修復</b>：檔案描述子重導向形式、超過 1 萬字元的超長指令一律改為詢問、zsh 變數下標與 <code>[[ ]]</code> 比較、部分 <code>help</code>／<code>man</code> 的不安全選項、以及帶 daemon 重導向旗標的 <code>docker</code> 指令現在都會要求授權；修復單段 <code>dir/**</code> 允許規則（如 <code>Edit(src/**)</code>）誤自動核准樹狀任意層 <code>dir/</code> 的寫入、Windows PowerShell 5.1 的權限繞過；新增長時間工具呼叫的定期進度心跳、記憶檔 frontmatter 加 ISO <code>modified</code> 時間戳、OTel 加 <code>message.uuid</code>／<code>client_request_id</code>／<code>tool_source</code> 屬性；修復排程任務誤把自身設定的 prompt 當成不信任輸入而拒絕執行。"},
+    {v:"2.1.212", date:"2026-07-17", cat:"Subagents/Skills", body:"<b><code>/fork</code> 改為把對話複製到新的背景 session</b>（在 <code>claude agents</code> 佔一列）讓你可繼續工作，原本的 in-session subagent 改名為 <code>/subtask</code>；新增 <code>claude auto-mode reset</code> 還原預設 auto-mode 設定；<b>新增每 session 的 WebSearch 上限</b>（預設 200，<code>CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION</code> 可調）與 <b>subagent 生成上限</b>（預設 200，<code>CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION</code>）避免失控迴圈；<b>執行超過 2 分鐘的 MCP 工具呼叫自動轉背景</b>讓 session 保持可用；修復 plan mode 未經權限提示即自動執行會改檔的 Bash 指令（如 <code>touch</code>、<code>rm</code>）；改善多圖對話誤報 Request too large。"},
+    {v:"2.1.211", date:"2026-07-15", cat:"Settings/Config", body:"新增 <code>--forward-subagent-text</code> 旗標與 <code>CLAUDE_CODE_FORWARD_SUBAGENT_TEXT</code>，把 subagent 文字與 thinking 納入 stream-json 輸出；修復轉發到聊天頻道的權限預覽未中和雙向覆寫／零寬／近似引號字元（避免工具輸入視覺上竄改核准訊息）、auto mode 覆寫 PreToolUse hook 的 <code>ask</code> 決策、多 session 共用憑證庫在睡眠喚醒後同時登出、plugin MCP 伺服器在閒置 web session 喚醒後未重連；<b>「always allow」權限規則改存到 repo 根目錄</b>，讓 worktree 內的核准可跨 session／worktree 持續；修復 Bedrock／Vertex／Mantle／Foundry 把結尾 system context 區塊每次都當成新 input token 計費的 prompt-cache 迴歸。"},
+    {v:"2.1.210", date:"2026-07-14", cat:"UI/UX", body:"工具摘要行新增即時 elapsed 計時，長時間工具呼叫會持續跳動而非看似卡住；<b>強化 Agent 工具對抗間接 prompt injection</b>（來自 subagent 讀入的內容）；<code>isolation:'worktree'</code> subagent 不再能對主 repo 執行 git 變更指令；<b>改良內建 dataviz skill 的圖表配色驗證</b>，改用感知式 OKLab 色差並重新校準色盲門檻；auto mode 權限分類器對外部 session 預設改用 Sonnet 5；螢幕報讀模式在以 Shift+Tab 切換權限模式時會朗讀模式變更；修復 <code>ultracode</code> 關鍵字誤在 webhook 酬載等非人類輸入上觸發。"},
+    {v:"2.1.209", date:"2026-07-14", cat:"Performance/Bug Fix", body:"修復 <code>/model</code> 等對話框在 <code>claude agents</code> 背景 session 被誤擋的問題（回滾過廣的防護）。"},
+    {v:"2.1.208", date:"2026-07-14", cat:"UI/UX", body:"<b>新增螢幕報讀模式（Screen reader mode）</b>：給螢幕報讀使用者的 opt-in 純文字渲染，可用 <code>claude --ax-screen-reader</code>、<code>CLAUDE_AX_SCREEN_READER=1</code> 或設定 <code>axScreenReader:true</code> 啟用；新增 <code>vimInsertModeRemaps</code> 設定（把 <code>jj</code> 等兩鍵 insert 序列對應到 Esc）；新增 <code>CLAUDE_CODE_PROCESS_WRAPPER</code> 讓企業啟動器包住每次自我生成；全螢幕模式的多選選單與「Other」輸入列支援滑鼠點擊；<b>大量記憶體與效能修復</b>：多項長 session 記憶體洩漏、超大 markdown 表格（>200 列改顯示前 200 列）、print/SDK session 工具組裝快取（高工具數下工具回合最高快 7 倍）、session transcript 體積（edit 密集最高降 79 倍）等。"},
+    {v:"2.1.207", date:"2026-07-11", cat:"Settings/Config", body:"<b>Auto mode 於 Bedrock、Vertex AI 與 Foundry 免 <code>CLAUDE_CODE_ENABLE_AUTO_MODE</code> opt-in 即可用</b>（以設定中的 <code>disableAutoMode</code> 關閉）；<b>Bedrock、Vertex 與 Claude Platform on AWS 預設改用 Claude Opus 4.8</b>；修復串流很長的清單／表格／段落／程式碼區塊時終端凍結與按鍵延遲、非互動執行（<code>claude -p</code>、SDK）的遠端 managed settings 未顯示同意對話就被永久記為已同意、benign 系統對話更新誤觸 prompt-injection 警告；auto mode 不再從 repo 內的 <code>.claude/settings.local.json</code> 讀 <code>autoMode</code>；plugin hooks／monitors／headersHelper 拒絕 shell-form 指令中的 <code>${user_config.*}</code>（shell 注入修復）。"},
+    {v:"2.1.206", date:"2026-07-09", cat:"Slash Commands", body:"<code>/cd</code> 新增目錄路徑建議（比照 <code>/add-dir</code>）；新增 <code>/doctor</code> 檢查，建議精簡可由 codebase 推導的 <code>CLAUDE.md</code> 內容；<code>/commit-push-pr</code> 除 <code>origin</code> 外也自動允許推到 repo 設定的 push remote；Gateway：<code>/login</code> 支援 Anthropic 營運的公用 gateway 端點；<code>EnterWorktree</code> 進入專案 <code>.claude/worktrees/</code> 以外的 worktree 前先確認；背景 agent 於 Claude Code 更新後在背景升級，attach 時不再吃到緩慢的過期升級；<b>改善 <code>/code-review</code> 在 claude-opus-4-8 各 effort 等級的發現品質</b>；修復 <code>--mcp-config</code>／<code>.mcp.json</code> 忽略 per-server <code>request_timeout_ms</code> 導致長工具呼叫在 60 秒逾時。"},
+    {v:"2.1.205", date:"2026-07-08", cat:"Permissions/Security", body:"新增 auto mode 規則<b>封鎖竄改 session transcript 檔</b>；修復 <code>--json-schema</code> schema 無效時靜默輸出非結構化內容、含 <code>format</code> 關鍵字的 schema 被拒；修復在 <code>--max-turns</code> 上限結束回合時使用者訊息被靜默丟失、Windows worktree 移除刪到 worktree 外檔案（NTFS junction／symlink）；auto mode 對無法從情境解析的變數執行 <code>rm -rf</code> 前先詢問；背景任務通知明確聲明未發生人類輸入，避免 transcript 內偽造的核准被當真執行；<code>/doctor</code> 升級為可診斷並修復問題的完整設定健檢，<code>/checkup</code> 為其別名。"},
+    {v:"2.1.204", date:"2026-07-08", cat:"Performance/Bug Fix", body:"修復 headless session 的 SessionStart hooks 未串流 hook 事件，可能導致遠端 worker 在 hook 執行中被閒置回收。"},
+    {v:"2.1.203", date:"2026-07-07", cat:"UI/UX", body:"<b>登入即將過期時新增警告</b>，可在背景 session 被中斷前重新認證；manual 權限模式在頁尾加上灰色 ⏸ 徽章讓當前模式恆常可見；MCP <code>roots/list</code> 加入 session 的額外工作目錄並於變更時送 <code>notifications/roots/list_changed</code>；<b>大量背景 session 修復</b>：macOS 開啟／切換背景 agent 因誤判低記憶體停頓 15–20 秒、daemon session token 過期導致 session 永久無回應、返回 <code>claude agents</code> 時靜默停止執行中 subagent 並從頭重跑 prompt、背景 agent 繼承 daemon 過期 <code>PATH</code> 等；縮小 binary 約 7 MB、啟動記憶體約 7 MB。"},
+    {v:"2.1.202", date:"2026-07-06", cat:"Settings/Config", body:"<code>/config</code> 新增「Dynamic workflow size」設定，控管 Claude 生成動態 workflow 的規模（small／medium／large agent 數，屬建議性非強制上限）；workflow 生成的 agent 於遙測加上 <code>workflow.run_id</code> 與 <code>workflow.name</code> OpenTelemetry 屬性，可從 OTel 資料重建一次 workflow run 的活動；修復內嵌 Ctrl+R 歷史搜尋在掃描中接受或取消時的崩潰。"},
     {v:"2.1.201", date:"2026-07-03", cat:"Models/Inference", body:"Claude Sonnet 5 session 不再使用對話中途的 system role 來傳遞 harness 提醒。"},
     {v:"2.1.200", date:"2026-07-03", cat:"Settings/Config", body:"<b><code>AskUserQuestion</code> 對話框預設不再自動繼續</b>，可透過 <code>/config</code> 選擇加入閒置逾時；<b>「default」權限模式在 CLI、<code>--help</code>、VS Code 與 JetBrains 全面改稱「Manual」</b>（<code>--permission-mode manual</code> 與 <code>\"defaultMode\": \"manual\"</code> 與 <code>default</code> 皆接受）；修復 <code>.claude.json</code> 中 <code>disabledMcpServers</code>/<code>enabledMcpServers</code> 設為非陣列時啟動崩潰、背景 session 於睡眠／喚醒後靜默中止、背景 agent 因殘留 <code>daemon.lock</code>（PID 被 OS 重用）而再也無法啟動、subagent 於產出文字前被 rate limit 中斷回傳空結果等多項問題；<b>螢幕報讀改善</b>：裝飾字元隱藏、transcript 符號改讀短標籤、巢狀表格以「標題：值」逐行報讀。"},
     {v:"2.1.199", date:"2026-07-02", cat:"Subagents/Skills", body:"<b>堆疊式 slash-skill 呼叫（如 <code>/skill-a /skill-b do XYZ</code>）現在會載入所有開頭的 skills（最多 5 個）</b>而非只有第一個；SSL 憑證錯誤（TLS 檢測 proxy、缺 <code>NODE_EXTRA_CA_CERTS</code>、憑證過期）改為立即失敗並附修正提示，不再空耗重試；串流回應在 API 於部分輸出後才回報 overloaded／server error 時改為保留 partial 並標記未完成；<b>subagent 被 rate limit 或 server error 中斷時改為將 partial 回傳給父 agent</b>，並會把「用量已達上限」等錯誤如實回報而非誤判為成功；修復 Linux 背景 agent daemon 在不乾淨關閉後每約 50 秒自殺並殺光執行中 agent；<code>CLAUDE_CODE_RETRY_WATCHDOG</code> 將非容量類暫時性錯誤的預設重試次數提高到 300，並解除 <code>CLAUDE_CODE_MAX_RETRIES</code> 上限 15。"},
@@ -1578,6 +1591,7 @@
   ];
 
   const DATA_CA = [
+    {v:"2026-07-09", date:"2026-07-09", cat:"UI/UX", title:"Codex 併入 ChatGPT 桌面 App（含 PR Chat 與 Sites 自訂網域）", body:"<b>Codex 現為 macOS 與 Windows 上 ChatGPT 桌面 App 的一部分</b>：既有 Codex App 使用者可照常更新並保留專案、設定與工作流，可將 Codex 設為預設檢視，macOS 可保留 Codex 圖示。新功能：<b>App 內直接編輯 Markdown 與程式碼、使用 inline 註解、請 Codex 修改選取內容</b>；<b>PR Chat</b> 可審查 GitHub pull request、於情境中提問，送出 inline 審查回饋、檢視提出的補丁並就地編輯／接受／拒絕；<b>已發佈的 Sites 可連結自訂網域</b>。效能與修復：Computer Use 搭 GPT-5.6 更快、任務與 subagent 活動更易追蹤、plugin 管理移入設定、resume 任務與 follow-up 的權限處理改良、修復本地專案的任務恢復與 onboarding 重試迴圈等。"},
     {v:"2026-06-18", date:"2026-06-18", cat:"UI/UX", title:"Record & Replay + 本地↔遠端 thread 交棒 + 自動化批次操作", body:"新增 <b>Record &amp; Replay</b>（macOS）：把你示範過一次的工作流錄製成可重用的 skill（初期不含 EEA／英國／瑞士，且需啟用 Computer Use）；<b>thread 可在本地與遠端主機間交棒</b>，移到已連線主機上對應的專案繼續執行，Codex 也能代為協調交棒；自動化（automation）執行紀錄新增<b>批次操作</b>，可一次將所有 run 標為已讀或封存符合條件者；新增管理 SSH 連線的 deep links；Browser Use 改良：草稿瀏覽 session 移到伺服器後，可見分頁路由與註解仍會保留。"},
     {v:"2026-06-16", date:"2026-06-16", cat:"UI/UX", title:"更多 Codex App 功能擴展到 EEA／英國／瑞士", body:"更多 Codex App 能力推向歐洲經濟區、英國與瑞士：<b>Computer Use</b> 在這些地區的 macOS 與 Windows 可用，Codex 能以看、點、打字操作桌面 App；<b>Codex Chrome 擴充</b>可用於需登入 Chrome context 的瀏覽器任務，跨分頁於背景執行而不接管瀏覽器；<b>Memories</b> 可記住偏好、重複工作流、技術棧與 repo 慣例（這些地區預設關閉）；<b>Chronicle</b> 以 opt-in 研究預覽形式開放給 ChatGPT Pro（macOS），協助 Codex 從近期螢幕 context 建立記憶。"},
     {v:"2026-06-11", date:"2026-06-11", cat:"UI/UX", title:"Browser Developer mode + /init 指令 + 額度重置 banking", body:"新增 <b>Browser use 的 Developer mode</b>（Chrome 與 Codex 內建瀏覽器）：給 Codex 受控的 Chrome DevTools Protocol（CDP）存取，可做效能分析並深入除錯網路流量、console 輸出、runtime 錯誤與頁面狀態；composer 新增 <code>/init</code> 指令（與 Codex CLI 相同的專案指令初始化流程）；新增可自訂的 macOS Dock 圖示（淺／深色變體）；<b>Computer Use 開放給 EEA／英國／瑞士以外的企業用戶</b>，並支援在 Windows 設定每個 App 的 Computer Use 存取控制；指令選單新增「未讀對話」區；Plus／Pro 用戶新增額度重置 banking 與推薦邀請。Browser use 透過 CDP 與 DOM snapshot 最佳化加速最高 2 倍。"},
@@ -1614,6 +1628,14 @@
   ];
 
   const DATA_CI = [
+    {v:"0.144.6", date:"2026-07-18", cat:"Models/Inference", title:"CLI 0.144.6：更新 GPT-5.6 內建指令與 context window", body:"更新 GPT-5.6 <b>Sol、Terra、Luna</b> 的內建指令，並將其 context window 更正為 272,000 tokens。"},
+    {v:"0.144.5", date:"2026-07-16", cat:"Permissions/Security", title:"CLI 0.144.5：強化危險指令偵測", body:"<b>強化危險指令偵測</b>（涵蓋更多強制 <code>rm</code> 形式），並在拒絕指令時提供更清楚的原因。"},
+    {v:"0.144.4", date:"2026-07-14", cat:"Performance/Bug Fix", title:"CLI 0.144.4：維護性更新", body:"此 patch 版本無使用者面向的功能變更。"},
+    {v:"0.144.3", date:"2026-07-13", cat:"Performance/Bug Fix", title:"CLI 0.144.3：版本號更新", body:"自 <code>0.144.2</code> 起無合併的 PR 變更，僅發佈版本號。"},
+    {v:"0.144.2", date:"2026-07-13", cat:"Performance/Bug Fix", title:"CLI 0.144.2：回復 Guardian 自動審查政策", body:"回滾一項 prompting 迴歸，回復先前的 <b>Guardian 自動審查</b>政策、請求格式與工具行為。"},
+    {v:"0.144.1", date:"2026-07-09", cat:"Performance/Bug Fix", title:"CLI 0.144.1：安裝與 code-mode 修復", body:"修復 GitHub 回傳精簡／重排的發行 metadata 時 standalone 安裝失敗；確保 macOS 套件安裝同時提供 code-mode host 與 <code>codex</code> 執行檔；companion host binary 不可用時 code mode 改 fallback 到內建 runtime。"},
+    {v:"0.144.0", date:"2026-07-09", cat:"MCP/Tools", title:"CLI 0.144.0：writes 核准模式 + MCP 互動認證", body:"用量重置額度顯示類型與到期並可選擇兌換哪一筆；<b>新增 <code>writes</code> app-approval 模式</b>（允許宣告為唯讀的動作、寫入時才詢問）；<b>MCP 工具可互動請求認證，免實驗性 opt-in</b>；app-server host 可於執行時提供 Codex 認證並將成功登入導向 hosted 頁面；選擇 Ultra reasoning 時若高 multi-agent 併發可能快速增加用量會提出警告；修復 Intel macOS release binary 的 Code Mode 崩潰、貼上終端控制序列破壞 TUI 渲染等問題。"},
+    {v:"0.143.0", date:"2026-07-08", cat:"Plugins/MCP", title:"CLI 0.143.0：遠端 plugin 預設開 + 系統 proxy + Bedrock GPT-5.6", body:"<b>遠端 plugin 預設開啟</b>，含更豐富的 catalog 列、npm marketplace 來源與遠端／本地版本顯示；<b>認證與 Responses API 流量可走 macOS／Windows 系統 proxy</b>（含 PAC 與 WPAD）；<b>新增 Amazon Bedrock 上的 GPT-5.6 Sol、Terra、Luna 模型</b>；MCP 工具預設改用 tool search，ChatGPT-hosted MCP 伺服器可明確使用 session 認證；app-server client 可檢視環境、列出子 thread 並從特定 turn fork 歷史。"},
     {v:"0.142.5", date:"2026-07-01", cat:"Permissions/Security", title:"CLI 0.142.5：防止 WebSocket 請求內容寫入 trace log", body:"<b>安全修復</b>：不再將完整的 Responses WebSocket 請求酬載寫入 trace 記錄，避免敏感內容外流到追蹤日誌（回移至 0.142 發行分支）。"},
     {v:"0.142.4", date:"2026-06-29", cat:"Performance/Bug Fix", title:"CLI 0.142.4：維護性更新", body:"維護性 patch 版本，無使用者面向的功能變更。"},
     {v:"0.142.3", date:"2026-06-26", cat:"Performance/Bug Fix", title:"CLI 0.142.3：維護性更新", body:"自 0.142.2 起的維護性 patch 版本，無使用者面向的功能變更。"},
@@ -1663,6 +1685,15 @@
   ];
 
   const INSP_CC = [
+    {ico:"♿", color:"teal", feat:"Screen reader mode — CLI 無障礙純文字模式", ver:"v2.1.208 · 2026-07-14", auto:true,
+     desc:"AI 編碼工具本身推出螢幕報讀模式，提供 opt-in 純文字渲染與朗讀。",
+     scen:"<b>應用場景：</b>設計無障礙介面時，這是很好的對照：連 CLI 工具都在做 a11y。可把『提供純文字／報讀友善模式、朗讀狀態變更、隱藏純裝飾字元、巢狀表格逐行呈現』納入本行行動銀行 App 的無障礙設計檢查清單，作為設計規範的參考範例。",
+     roles:["designer","pm"],
+     d:[
+       {h:"為什麼對設計師有用", p:"無障礙常被當成工程議題，但體驗設計才是源頭。觀察主流工具怎麼做報讀模式（純文字渲染、朗讀模式切換、隱藏裝飾字元），能反過來校準自家 App 的 a11y 規範。"},
+       {h:"值得借鏡的做法", l:["提供明確的『報讀友善』開關，而非藏在設定深處","狀態改變（如模式切換）要能被朗讀，不只有視覺提示","隱藏純裝飾字元，避免報讀器念出無意義符號","巢狀表格改以『標題：值』逐行呈現"]},
+       {h:"落地建議", p:"把這幾點寫進設計 QA checklist，交付前用實際報讀器走一次關鍵流程（登入、轉帳、確認頁）。"}
+     ]},
     {ico:"⚡", color:"purple", feat:"/ultrareview — 平行多 Agent Code Review", ver:"v2.1.111 · 2026-04-16",
      desc:"非互動式雲端平行多 agent review，可一次跑安全、效能、可讀性、Style 多視角。",
      scen:"<b>iOS 場景：</b>每次 PR 進 develop 前自動跑 <code>claude ultrareview</code>，產出 Swift Concurrency、SwiftUI 效能、銀行交易資安、團隊 Style 四份報告。RD 不再瓶頸於 Senior Reviewer。",
@@ -1773,6 +1804,15 @@
   ];
 
   const INSP_CA = [
+    {ico:"🖥️", color:"blue", feat:"Codex 併入 ChatGPT 桌面 App（含 Sites 自訂網域）", ver:"2026-07-09 · Codex App", auto:true,
+     desc:"Codex 成為桌面 App 的一部分，可直接內嵌編修 Markdown／程式碼、審查 PR，並為已發佈的 Sites 綁自訂網域。",
+     scen:"<b>應用場景：</b>設計師做互動原型或 landing page 時，可在同一個 App 內請 Codex 產出頁面、直接內嵌編修 Markdown 與程式碼、用 inline 註解調整，最後把成品發佈為 Sites 並綁自訂網域，快速做出可分享、可點擊的真連結原型給利害關係人。",
+     roles:["designer","pm"],
+     d:[
+       {h:"為什麼對設計師有用", p:"原型與提案常卡在『看得到但點不到、分享要另外部署』。整合進桌面 App 後，從生成、內嵌編修到發佈成帶自訂網域的 Sites 一氣呵成，設計師不必依賴工程就能交出可點擊的真連結。"},
+       {h:"幾個重點能力", l:["<b>App 內編修</b>：直接改 Markdown 與程式碼、用 inline 註解、請 Codex 修改選取內容","<b>PR Chat</b>：審查 GitHub PR、於情境中提問、檢視並接受／拒絕補丁","<b>Sites 自訂網域</b>：已發佈的 Sites 可連結自訂網域","<b>Computer Use</b> 搭 GPT-5.6 更快"]},
+       {h:"注意", p:"既有 Codex App 使用者可照常更新並保留專案、設定與工作流；實際開放範圍與方案請以官方為準。"}
+     ]},
     {ico:"⏺", color:"gold", feat:"Record & Replay — 把重複流程錄成可重用 skill", ver:"2026-06-18 · Codex App", auto:true,
      desc:"在 macOS 示範一次工作流，Codex 把它錄成可重用的 skill，日後一鍵重播。",
      scen:"<b>應用場景：</b>把每次交付前的重複手動流程（例如多尺寸切圖匯出、依命名規則整理交付資料夾、產出標註版預覽）示範一次錄成 skill，之後一鍵重播，省去機械式手工步驟。",
